@@ -3,39 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Fall 2026 Premium Timetable</title>
+    <title>Fall 2026 Timetable</title>
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } }
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        cloudGray: '#e2e8f0',
+                        cloudGrayLight: '#f1f5f9',
+                        jetBlack: '#0a0a0c',
+                        jetBlackCard: '#121215'
+                    }
+                } 
+            }
         }
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         html, body { height: 100%; }
-        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+            background-color: #e2e8f0; /* Cloud Gray light mode background */
+            color: #0a0a0c; /* Jet Black text */
+        }
+        .dark body { 
+            background-color: #0a0a0c; /* Jet Black dark mode background */
+            color: #f1f5f9; /* Cloud Gray text */
+        }
 
-        select option { background-color: #ffffff; color: #0f172a; }
-        .dark select option { background-color: #1e293b; color: #f8fafc; }
+        /* Select Options Dark/Light Mode Styling */
+        select option { background-color: #ffffff; color: #0a0a0c; }
+        .dark select option { background-color: #121215; color: #f1f5f9; }
 
         .table-wrapper {
             overflow: auto;
             -webkit-overflow-scrolling: touch;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
             border-radius: 1rem;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             background: #ffffff;
         }
         .dark .table-wrapper {
-            border-color: #334155;
-            background: #1e293b;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+            border-color: #27272a;
+            background: #121215;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
         }
 
-        /* GRID (phone first): fits the screen width, keeps its shape */
         .tt-grid {
             display: grid;
             grid-template-columns: 42px repeat(5, minmax(0, 1fr));
@@ -54,33 +73,33 @@
         #timetableBody { display: contents; }
 
         .tt-head, .tt-time, .tt-cell {
-            border-right: 1px solid #f1f5f9;
-            border-bottom: 1px solid #f1f5f9;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
             min-width: 0;
             min-height: 0;
         }
         .dark .tt-head, .dark .tt-time, .dark .tt-cell {
-            border-right-color: #334155;
-            border-bottom-color: #334155;
+            border-right-color: #27272a;
+            border-bottom-color: #27272a;
         }
         .tt-grid > :nth-child(6n) { border-right: none; }
 
         .tt-head {
             position: sticky; top: 0; z-index: 5;
             display: flex; align-items: center; justify-content: center;
-            background-color: #f8fafc;
-            color: #64748b;
+            background-color: #f1f5f9;
+            color: #0a0a0c;
             text-transform: uppercase;
-            font-size: 0.62rem; font-weight: 600; letter-spacing: 0.03em;
+            font-size: 0.62rem; font-weight: 700; letter-spacing: 0.03em;
         }
         @media (min-width: 768px) { .tt-head { font-size: 0.7rem; letter-spacing: 0.05em; } }
-        .dark .tt-head { background-color: #1e293b; color: #94a3b8; }
+        .dark .tt-head { background-color: #18181b; color: #cbd5e1; }
 
         .tt-corner, .tt-time {
             position: sticky; left: 0;
-            background-color: rgba(248, 250, 252, 0.95);
+            background-color: rgba(241, 245, 249, 0.95);
             backdrop-filter: blur(8px);
-            border-right: 2px solid #e2e8f0;
+            border-right: 2px solid #cbd5e1;
         }
         .tt-corner { z-index: 20; }
         .tt-time {
@@ -89,8 +108,8 @@
             text-align: center; font-weight: 600;
         }
         .dark .tt-corner, .dark .tt-time {
-            background-color: rgba(30, 41, 59, 0.95);
-            border-right-color: #334155;
+            background-color: rgba(24, 24, 27, 0.95);
+            border-right-color: #27272a;
         }
 
         .tt-cell { padding: 2px; overflow: hidden; }
@@ -101,12 +120,12 @@
 
         .table-wrapper::-webkit-scrollbar { height: 8px; width: 8px; }
         .table-wrapper::-webkit-scrollbar-track { background: transparent; }
-        .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #ffffff; }
-        .dark .table-wrapper::-webkit-scrollbar-thumb { background: #475569; border-color: #1e293b; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; border: 2px solid #ffffff; }
+        .dark .table-wrapper::-webkit-scrollbar-thumb { background: #3f3f46; border-color: #121215; }
 
-        /* Course gradients (thinner accent border on phones) */
+        /* Course palette styled cleanly against Cloud Gray & Jet Black theme */
         .bg-DataStructure { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; border-left: 3px solid #3b82f6; }
-        .bg-DiscreteMath { background: linear-gradient(135deg, #f5f3ff, #ede9fe); color: #5b21b6; border-left: 3px solid #8b5cf6; }
+        .bg-DiscreteMath { background: linear-gradient(135deg, #e0f2fe, #bae6fd); color: #0369a1; border-left: 3px solid #0284c7; }
         .bg-LinearAlgebra { background: linear-gradient(135deg, #eef2ff, #e0e7ff); color: #3730a3; border-left: 3px solid #6366f1; }
         .bg-Chinese { background: linear-gradient(135deg, #fff1f2, #ffe4e6); color: #9f1239; border-left: 3px solid #f43f5e; }
         .bg-English { background: linear-gradient(135deg, #f0fdfa, #ccfbf1); color: #115e59; border-left: 3px solid #14b8a6; }
@@ -117,54 +136,53 @@
             .bg-English, .bg-Circuit, .bg-China { border-left-width: 4px; }
         }
 
-        .dark .bg-DataStructure { background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05)); color: #93c5fd; }
-        .dark .bg-DiscreteMath { background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05)); color: #c4b5fd; }
-        .dark .bg-LinearAlgebra { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.05)); color: #a5b4fc; }
-        .dark .bg-Chinese { background: linear-gradient(135deg, rgba(244,63,94,0.15), rgba(244,63,94,0.05)); color: #fda4af; }
-        .dark .bg-English { background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(20,184,166,0.05)); color: #5eead4; }
-        .dark .bg-Circuit { background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05)); color: #fcd34d; }
-        .dark .bg-China { background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.05)); color: #f9a8d4; }
+        .dark .bg-DataStructure { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.08)); color: #93c5fd; }
+        .dark .bg-DiscreteMath { background: linear-gradient(135deg, rgba(2,132,199,0.2), rgba(2,132,199,0.08)); color: #7dd3fc; }
+        .dark .bg-LinearAlgebra { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.08)); color: #a5b4fc; }
+        .dark .bg-Chinese { background: linear-gradient(135deg, rgba(244,63,94,0.2), rgba(244,63,94,0.08)); color: #fda4af; }
+        .dark .bg-English { background: linear-gradient(135deg, rgba(20,184,166,0.2), rgba(20,184,166,0.08)); color: #5eead4; }
+        .dark .bg-Circuit { background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.08)); color: #fcd34d; }
+        .dark .bg-China { background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(236,72,153,0.08)); color: #f9a8d4; }
 
         .course-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         @media (hover: hover) {
-            .course-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+            .course-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.15); }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.99); } to { opacity: 1; transform: scale(1); } }
         .animate-fade { animation: fadeIn 0.2s ease-out forwards; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300 h-[100dvh] w-screen flex flex-col p-2 md:p-4 box-border m-0">
+<body class="transition-colors duration-300 h-[100dvh] w-screen flex flex-col p-2 md:p-4 box-border m-0">
 
     <div class="max-w-6xl w-full mx-auto flex flex-col h-full gap-2 md:gap-3 overflow-hidden">
 
-        <!-- Header: 2 compact rows on phones, 1 row on desktop -->
-        <div class="flex-none flex flex-wrap md:flex-nowrap justify-between items-center bg-white dark:bg-slate-800 p-2.5 md:p-4 rounded-2xl shadow border border-slate-200 dark:border-slate-700 gap-2 md:gap-3 z-10">
+        <!-- Header: Jet Black in light mode, Cloud Gray panel in dark mode -->
+        <div class="flex-none flex flex-wrap md:flex-nowrap justify-between items-center bg-white dark:bg-[#121215] p-2.5 md:p-4 rounded-2xl shadow border border-slate-300 dark:border-zinc-800 gap-2 md:gap-3 z-10">
 
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shrink-0">
+                <div class="w-8 h-8 rounded-xl bg-[#0a0a0c] dark:bg-slate-200 flex items-center justify-center text-white dark:text-[#0a0a0c] shadow-md shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 leading-tight">Fall 2026</h1>
-                    <p class="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 font-medium leading-tight">Computer Science Timetable</p>
+                    <h1 class="text-lg md:text-xl font-bold text-[#0a0a0c] dark:text-[#f1f5f9] leading-tight">Fall 2026</h1>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-tight">Computer Science Timetable</p>
                 </div>
             </div>
 
-            <!-- Theme button sits on row 1 (right) on phones; order keeps nav below -->
-            <button onclick="toggleTheme()" class="md:order-3 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm" title="Toggle Theme">
+            <button onclick="toggleTheme()" class="md:order-3 p-2 rounded-xl bg-[#e2e8f0] dark:bg-zinc-900 text-[#0a0a0c] dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-zinc-800 transition-colors shadow-sm" title="Toggle Theme">
                 <svg class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <svg class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </button>
 
-            <div class="flex items-center justify-between w-full md:w-auto md:order-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl shadow-inner gap-1">
-                <button onclick="changeWeek(-1)" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm hover:shadow text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all hover:text-blue-600 dark:hover:text-blue-400">&larr; Prev</button>
-                <select id="weekSelector" onchange="jumpToWeek(this.value)" class="flex-1 md:flex-none px-2 py-1.5 bg-slate-100 dark:bg-slate-900 font-bold text-slate-800 dark:text-white focus:outline-none cursor-pointer text-center appearance-none text-xs md:text-sm rounded-lg border-none"></select>
-                <button onclick="changeWeek(1)" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm hover:shadow text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all hover:text-blue-600 dark:hover:text-blue-400">Next &rarr;</button>
+            <div class="flex items-center justify-between w-full md:w-auto md:order-2 bg-[#e2e8f0] dark:bg-zinc-900 p-1 rounded-xl shadow-inner gap-1 border border-slate-300 dark:border-zinc-800">
+                <button onclick="changeWeek(-1)" class="px-3 py-1.5 rounded-lg bg-white dark:bg-[#121215] shadow-sm hover:shadow text-xs font-semibold text-[#0a0a0c] dark:text-slate-200 transition-all hover:bg-slate-100 dark:hover:bg-zinc-800">&larr; Prev</button>
+                <select id="weekSelector" onchange="jumpToWeek(this.value)" class="flex-1 md:flex-none px-2 py-1.5 bg-transparent font-bold text-[#0a0a0c] dark:text-white focus:outline-none cursor-pointer text-center appearance-none text-xs md:text-sm rounded-lg border-none"></select>
+                <button onclick="changeWeek(1)" class="px-3 py-1.5 rounded-lg bg-white dark:bg-[#121215] shadow-sm hover:shadow text-xs font-semibold text-[#0a0a0c] dark:text-slate-200 transition-all hover:bg-slate-100 dark:hover:bg-zinc-800">Next &rarr;</button>
             </div>
         </div>
 
-        <!-- Timetable: fills all remaining height, rows split it evenly -->
+        <!-- Timetable -->
         <div class="table-wrapper flex-1 min-h-0">
             <div id="timetable" class="tt-grid">
                 <div class="tt-head tt-corner"><span class="md:hidden">Time</span><span class="hidden md:inline">Time</span></div>
@@ -179,29 +197,29 @@
     </div>
 
     <!-- Modal -->
-    <div id="courseModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity" onclick="closeModal(event)">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-0 max-w-xs w-full overflow-hidden transform transition-transform scale-95" id="modalContent" onclick="event.stopPropagation()">
-            <div id="modalHeader" class="p-5 text-white bg-gradient-to-r from-blue-500 to-indigo-600">
+    <div id="courseModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-opacity" onclick="closeModal(event)">
+        <div class="bg-white dark:bg-[#121215] border border-slate-300 dark:border-zinc-800 rounded-2xl shadow-2xl p-0 max-w-xs w-full overflow-hidden transform transition-transform scale-95" id="modalContent" onclick="event.stopPropagation()">
+            <div id="modalHeader" class="p-5 text-white bg-gradient-to-r from-blue-600 to-indigo-600">
                 <div class="flex justify-between items-start gap-2">
                     <h2 id="modalTitle" class="text-lg font-bold leading-tight">Course Name</h2>
                     <button onclick="closeModal()" class="text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-7 h-7 shrink-0 transition-colors">&times;</button>
                 </div>
             </div>
             <div class="p-5 space-y-3">
-                <div class="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-                    <div class="p-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                <div class="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                    <div class="p-1.5 bg-slate-100 dark:bg-zinc-800 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
                     <div><p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Instructor</p><p id="modalInstructor" class="font-semibold text-xs"></p></div>
                 </div>
-                <div class="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-                    <div class="p-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></div>
+                <div class="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                    <div class="p-1.5 bg-slate-100 dark:bg-zinc-800 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></div>
                     <div><p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Room</p><p id="modalRoom" class="font-semibold text-xs"></p></div>
                 </div>
-                <div class="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-                    <div class="p-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                <div class="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                    <div class="p-1.5 bg-slate-100 dark:bg-zinc-800 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                     <div><p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Time</p><p id="modalTime" class="font-semibold text-xs"></p></div>
                 </div>
-                <div class="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-                    <div class="p-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+                <div class="flex items-center gap-3 text-slate-700 dark:text-slate-300">
+                    <div class="p-1.5 bg-slate-100 dark:bg-zinc-800 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
                     <div><p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Active Weeks</p><p id="modalWeeks" class="font-semibold text-xs"></p></div>
                 </div>
             </div>
@@ -209,17 +227,18 @@
     </div>
 
     <script>
+        const MIN_WEEK = 11;
         const MAX_WEEKS = 19;
-        let currentWeek = 10;
+        let currentWeek = 11;
 
         const courses = {
-            "DS": { name: "Data Structure", instructor: "Ms. Fang Yuan", room: "201", color: "bg-DataStructure", modalGrad: "from-blue-500 to-blue-600" },
-            "DM": { name: "Discrete Mathematics", instructor: "Ms. Shao Huiyan", room: "101", color: "bg-DiscreteMath", modalGrad: "from-purple-500 to-purple-600" },
-            "LA": { name: "Linear Algebra", instructor: "Ms. Liu Yan", room: "101", color: "bg-LinearAlgebra", modalGrad: "from-indigo-500 to-indigo-600" },
-            "CC": { name: "Comprehensive Chinese III", instructor: "Ms. Yang Yanqing", color: "bg-Chinese", modalGrad: "from-rose-500 to-rose-600" },
-            "EC": { name: "English Composition", instructor: "Ms. Wu Jie", color: "bg-English", modalGrad: "from-teal-500 to-teal-600" },
-            "CET": { name: "Circuit & Electronic Tech", instructor: "Ms. Chu Ran", color: "bg-Circuit", modalGrad: "from-amber-500 to-amber-600" },
-            "OC": { name: "Overview of China", instructor: "Ms. Yu Yan", room: "101", color: "bg-China", modalGrad: "from-pink-500 to-pink-600" }
+            "DS": { name: "Data Structure", instructor: "Ms. Fang Yuan", room: "201", color: "bg-DataStructure", modalGrad: "from-blue-600 to-indigo-600" },
+            "DM": { name: "Discrete Mathematics", instructor: "Ms. Shao Huiyan", room: "101", color: "bg-DiscreteMath", modalGrad: "from-sky-600 to-blue-600" },
+            "LA": { name: "Linear Algebra", instructor: "Ms. Liu Yan", room: "101", color: "bg-LinearAlgebra", modalGrad: "from-indigo-600 to-violet-600" },
+            "CC": { name: "Comprehensive Chinese III", instructor: "Ms. Yang Yanqing", color: "bg-Chinese", modalGrad: "from-rose-600 to-pink-600" },
+            "EC": { name: "English Composition", instructor: "Ms. Wu Jie", color: "bg-English", modalGrad: "from-teal-600 to-emerald-600" },
+            "CET": { name: "Circuit & Electronic Tech", instructor: "Ms. Chu Ran", color: "bg-Circuit", modalGrad: "from-amber-600 to-orange-600" },
+            "OC": { name: "Overview of China", instructor: "Ms. Yu Yan", room: "101", color: "bg-China", modalGrad: "from-pink-600 to-rose-600" }
         };
 
         const timeSlots = [
@@ -229,12 +248,43 @@
             { id: "T4", start: "15:15", end: "16:50", raw: "15:15 - 16:50" }
         ];
 
-        // Monday afternoon (T3, T4) in week 17 = Data Structure Project Week
         const schedule = [
-            { T1: [], T2: [{ id: "DM", weeks: "1-4,7-14", room: "101" }], T3: [{ id: "DS", weeks: "1-4,7-16", room: "201" }, { id: "DS", weeks: "17", room: "201", title: "Data Structure Project Week" }], T4: [{ id: "DS", weeks: "1-4,7-16", room: "201" }, { id: "DS", weeks: "17", room: "201", title: "Data Structure Project Week" }] },
+            // Monday (0)
+            { 
+                T1: [], 
+                T2: [
+                    { id: "DM", weeks: "1-4,7-14", room: "101" },
+                    { id: "CET", weeks: "15", room: "506", title: "Circuit Exp 2 (Ex 2)" },
+                    { id: "CET", weeks: "16", room: "506", title: "Circuit Exp 4 (Ex 4)" }
+                ], 
+                T3: [
+                    { id: "DS", weeks: "1-4,7-16", room: "201" }, 
+                    { id: "DS", weeks: "17", room: "201", title: "Data Structure Project Week" }
+                ], 
+                T4: [
+                    { id: "DS", weeks: "1-4,7-16", room: "201" }, 
+                    { id: "DS", weeks: "17", room: "201", title: "Data Structure Project Week" }
+                ] 
+            },
+            // Tuesday (1)
             { T1: [{ id: "CC", weeks: "1-4,7-18", room: "101" }], T2: [{ id: "CET", weeks: "1-3", room: "101" }], T3: [{ id: "EC", weeks: "1-4", room: "101" }], T4: [] },
+            // Wednesday (2)
             { T1: [{ id: "DM", weeks: "1-4,7-14", room: "101" }], T2: [{ id: "EC", weeks: "1-4", room: "201" }, { id: "CET", weeks: "11-13", room: "201" }], T3: [{ id: "OC", weeks: "8-19", room: "101" }], T4: [{ id: "OC", weeks: "8-19", room: "101" }] },
-            { T1: [{ id: "LA", weeks: "3-4", room: "101" }], T2: [{ id: "LA", weeks: "3-4", room: "101" }], T3: [{ id: "LA", weeks: "7-11", room: "101" }], T4: [{ id: "CET", weeks: "2-4,6-8", room: "101" }, { id: "LA", weeks: "9-12", room: "101" }] },
+            // Thursday (3)
+            { 
+                T1: [{ id: "LA", weeks: "3-4", room: "101" }], 
+                T2: [{ id: "LA", weeks: "3-4", room: "101" }], 
+                T3: [
+                    { id: "LA", weeks: "7-11", room: "101" },
+                    { id: "CET", weeks: "14", room: "506", title: "Circuit Exp 1 (Ex 1)" },
+                    { id: "CET", weeks: "15", room: "506", title: "Circuit Exp 3 (Ex 3)" }
+                ], 
+                T4: [
+                    { id: "CET", weeks: "2-4,6-8", room: "101" }, 
+                    { id: "LA", weeks: "9-12", room: "101" }
+                ] 
+            },
+            // Friday (4)
             { T1: [{ id: "EC", weeks: "7-10", room: "201" }], T2: [{ id: "CC", weeks: "1-3,6-18", room: "201" }], T3: [], T4: [] }
         ];
 
@@ -251,7 +301,7 @@
 
         function init() {
             const selector = document.getElementById('weekSelector');
-            for (let i = 1; i <= MAX_WEEKS; i++) {
+            for (let i = MIN_WEEK; i <= MAX_WEEKS; i++) {
                 const opt = document.createElement('option');
                 opt.value = i; opt.text = `Week ${i}`;
                 selector.appendChild(opt);
@@ -270,7 +320,7 @@
 
         function changeWeek(delta) {
             const newWeek = currentWeek + delta;
-            if (newWeek >= 1 && newWeek <= MAX_WEEKS) renderWeek(newWeek);
+            if (newWeek >= MIN_WEEK && newWeek <= MAX_WEEKS) renderWeek(newWeek);
         }
 
         function jumpToWeek(weekVal) { renderWeek(parseInt(weekVal)); }
@@ -284,7 +334,7 @@
 
             timeSlots.forEach(slot => {
                 const timeCell = document.createElement('div');
-                timeCell.className = "tt-time text-[9px] md:text-xs text-slate-500 dark:text-slate-400 tracking-wide leading-tight";
+                timeCell.className = "tt-time text-[9px] md:text-xs text-slate-600 dark:text-slate-400 tracking-wide leading-tight";
                 timeCell.innerHTML = `<div>${slot.start}<br><span class='hidden md:inline text-slate-400 text-[9px]'>to<br></span><span class='md:hidden text-slate-400'>–<br></span>${slot.end}</div>`;
                 body.appendChild(timeCell);
 
